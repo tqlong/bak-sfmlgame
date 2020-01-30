@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-    shared_ptr<Game> game = shared_ptr<Game>(new PingPongGame);
+    shared_ptr<Game> game = make_shared<PingPongGame>();
     game->createGame(game);
     //game->printStatus();
     game->loop();

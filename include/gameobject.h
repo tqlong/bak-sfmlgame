@@ -21,6 +21,8 @@ class GameObject
     protected:
         std::weak_ptr<Game> m_pGame;
         int m_id;
+
+        std::shared_ptr<Game> getGame() const { return std::shared_ptr<Game>(m_pGame); }
     private:
 };
 

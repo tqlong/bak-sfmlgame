@@ -24,7 +24,7 @@ void PingPongBall::setPosition(float x, float y)
 {
     m_x = x, m_y = y;
 
-    x *= shared_ptr<Game>(m_pGame)->getWindow().getSize().x, y *= shared_ptr<Game>(m_pGame)->getWindow().getSize().y;
+    x *= getGame()->getWindow().getSize().x, y *= getGame()->getWindow().getSize().y;
 
     //cout << "x " << x << " y " << y << endl;
     m_shape.setPosition(x, y);
@@ -33,7 +33,7 @@ void PingPongBall::setPosition(float x, float y)
 void PingPongBall::setRadius(float r)
 {
     m_r = r;
-    float radius = m_r*shared_ptr<Game>(m_pGame)->getWindow().getSize().x;
+    float radius = m_r*getGame()->getWindow().getSize().x;
     m_shape.setRadius(radius);
     m_shape.setOrigin(radius, radius);
 

@@ -24,7 +24,7 @@ class Game
         void registerObject(std::shared_ptr<GameObject> pObject);
     protected:
         sf::RenderWindow m_window;
-        std::unordered_map<int, std::shared_ptr<GameObject>> m_objects;
+        std::unordered_map<int, std::weak_ptr<GameObject>> m_objects;
 
         void renderGame();
     private:

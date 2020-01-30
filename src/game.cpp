@@ -23,7 +23,7 @@ void Game::registerObject(std::shared_ptr<GameObject> pObject)
 void Game::printStatus() const
 {
     for (const auto& p : m_objects) {
-        p.second->printStatus();
+        std::shared_ptr<GameObject>(p.second)->printStatus();
     }
 }
 
@@ -32,7 +32,7 @@ void Game::renderGame()
     m_window.clear();
 
     for (const auto& p : m_objects) {
-        p.second->draw(m_window);
+        std::shared_ptr<GameObject>(p.second)->draw(m_window);
     }
 
     m_window.display();
