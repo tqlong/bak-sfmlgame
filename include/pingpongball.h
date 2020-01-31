@@ -20,12 +20,19 @@ class PingPongBall : public GameObject
         std::pair<sf::Vector2f, sf::Vector2f> getPredictedPosition(float dt) const;
 
         void printStatus() const;
+
+        float getTimeToHitVerticalWall() const;
+        float getTimeToHitHorizontalWall() const;
+        void bounceOffVerticalWall();
+        void bounceOffHorizontalWall();
+        int getCount() const { return m_count; }
     protected:
         float m_x;
         float m_y;
         float m_r;
         float m_vx;
         float m_vy;
+        int m_count;
 
         sf::Vector2u m_windowSize;
         sf::CircleShape m_shape;
