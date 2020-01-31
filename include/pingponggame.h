@@ -31,7 +31,7 @@ bool operator< (const Event& a, const Event& b);
 class PingPongGame : public Game
 {
     public:
-        PingPongGame(int nBall = 100, float baseRadius = 1.0f);
+        PingPongGame(std::string name, int nBall = 100, float baseRadius = 1.0f);
         virtual ~PingPongGame();
 
         void createGame(std::shared_ptr<Game> pGame);

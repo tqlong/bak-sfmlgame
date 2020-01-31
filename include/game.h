@@ -4,6 +4,7 @@
 #include "gameobject.h"
 
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
 
@@ -12,7 +13,7 @@ class GameObject;
 class Game
 {
     public:
-        Game();
+        Game(std::string name);
         virtual ~Game();
 
         virtual void createGame(std::shared_ptr<Game>) {}
@@ -24,6 +25,7 @@ class Game
         void registerObject(std::shared_ptr<GameObject> pObject);
     protected:
         sf::RenderWindow m_window;
+        std::string m_name;
         std::unordered_map<int, std::weak_ptr<GameObject>> m_objects;
 
         void renderGame();

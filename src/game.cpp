@@ -1,7 +1,7 @@
 #include "game.h"
-
-Game::Game()
-    : m_window(sf::VideoMode(800, 800), "SFML works!"), m_nObject(0)
+using namespace std;
+Game::Game(string name)
+    : m_window(sf::VideoMode(800, 800), name), m_name(name), m_nObject(0)
 {
     //ctor
 }

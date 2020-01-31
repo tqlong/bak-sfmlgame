@@ -5,8 +5,8 @@
 
 using namespace std;
 
-PingPongGame::PingPongGame(int nBall, float baseRadius)
-    : m_currentTime(0.f), m_nBall(nBall), m_baseRadius(baseRadius)
+PingPongGame::PingPongGame(std::string name, int nBall, float baseRadius)
+    : Game(name), m_currentTime(0.f), m_nBall(nBall), m_baseRadius(baseRadius)
 {
 
 }
