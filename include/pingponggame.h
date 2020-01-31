@@ -31,7 +31,7 @@ bool operator< (const Event& a, const Event& b);
 class PingPongGame : public Game
 {
     public:
-        PingPongGame();
+        PingPongGame(int nBall = 100, float baseRadius = 1.0f);
         virtual ~PingPongGame();
 
         void createGame(std::shared_ptr<Game> pGame);
@@ -41,6 +41,8 @@ class PingPongGame : public Game
         std::vector<ptrPingPongBall> m_balls;
         std::priority_queue<Event> m_eventQueue;
         float m_currentTime;
+        int m_nBall;
+        float m_baseRadius;
     private:
         void step(float dt);
         void predict(ptrPingPongBall, float limit = std::numeric_limits<float>::infinity());

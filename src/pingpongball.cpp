@@ -1,9 +1,10 @@
 #include "pingpongball.h"
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 PingPongBall::PingPongBall(std::shared_ptr<Game> pGame)
-    : GameObject(pGame), m_x(0.f), m_y(0.f), m_r(0.02f), m_vx(0.f), m_vy(0.f), m_count(0)
+    : GameObject(pGame), m_x(0.f), m_y(0.f), m_r(0.02f), m_vx(0.f), m_vy(0.f), m_mass(0.5f), m_count(0)
 {
     setColor(0, 255, 0);
     setRadius(m_r);
@@ -34,6 +35,7 @@ void PingPongBall::setRadius(float r)
 {
     m_r = r;
     float radius = m_r*getGame()->getWindow().getSize().x;
+    radius = (radius < 0.5) ? 0.5 : radius;
     m_shape.setRadius(radius);
     m_shape.setOrigin(radius, radius);
 
@@ -48,6 +50,11 @@ void PingPongBall::setColor(int r, int g, int b, int a)
 void PingPongBall::setVelocity(float vx, float vy)
 {
     m_vx = vx, m_vy = vy;
+}
+
+void PingPongBall::setMass(float mass)
+{
+    m_mass = mass;
 }
 
 void PingPongBall::printStatus() const
@@ -72,9 +79,12 @@ float PingPongBall::getTimeToHitVerticalWall() const
 
 float PingPongBall::getTimeToHitHorizontalWall() const
 {
-    if (m_vy > 0)      return (1.0 - m_y - m_r) / m_vy;
-    else if (m_vy < 0) return (m_r - m_y) / m_vy;
-    else               return numeric_limits<float>::infinity();
+    float dt;
+    if (m_vy > 0)      dt = (1.0 - m_y - m_r) / m_vy;
+    else if (m_vy < 0) dt = (m_r - m_y) / m_vy;
+    else               dt = numeric_limits<float>::infinity();
+    return dt;
+//    return dt > 0 ? dt : 0.f;
 }
 
 void PingPongBall::bounceOffVerticalWall()
@@ -87,4 +97,58 @@ void PingPongBall::bounceOffHorizontalWall()
 {
     m_vy = -m_vy;
     m_count++;
+}
+
+float PingPongBall::getTimeToHit(std::shared_ptr<PingPongBall> that) const
+{
+    float INF = numeric_limits<float>::infinity();
+    if (this == that.get()) return INF;
+    float dx  = that->m_x - this->m_x;
+    float dy  = that->m_y - this->m_y;
+    float dvx = that->m_vx - this->m_vx;
+    float dvy = that->m_vy - this->m_vy;
+    float dvdr = dx*dvx + dy*dvy;
+    if (dvdr > 0) return INF;
+    float dvdv = dvx*dvx + dvy*dvy;
+    if (dvdv == 0) return INF;
+    float drdr = dx*dx + dy*dy;
+    float sigma = this->m_r + that->m_r;
+    float d = (dvdr*dvdr) - dvdv * (drdr - sigma*sigma);
+    // if (drdr < sigma*sigma) StdOut.println("overlapping particles");
+    if (d < 0) return INF;
+    float dt = -(dvdr + sqrt(d)) / dvdv;
+    float x = that->m_x + dt * that->m_vx;
+    float y = that->m_y + dt * that->m_vy;
+    if (x < that->m_r || x > 1.0-that->m_r || y < that->m_r || y > 1.0 - that->m_r) return INF;
+    x = this->m_x + dt * this->m_vx;
+    y = this->m_y + dt * this->m_vy;
+    if (x < this->m_r || x > 1.0-this->m_r || y < this->m_r || y > 1.0 - this->m_r) return INF;
+    return dt;
+}
+
+void PingPongBall::bounceOff(std::shared_ptr<PingPongBall> that)
+{
+    float dx  = that->m_x - this->m_x;
+    float dy  = that->m_y - this->m_y;
+    float dvx = that->m_vx - this->m_vx;
+    float dvy = that->m_vy - this->m_vy;
+    float dvdr = dx*dvx + dy*dvy;          // dv dot dr
+    double dist = this->m_r + that->m_r;   // distance between particle centers at collison
+
+    // magnitude of normal force
+    double magnitude = 2 * this->m_mass * that->m_mass * dvdr / ((this->m_mass + that->m_mass) * dist);
+
+    // normal force, and in x and y directions
+    double fx = magnitude * dx / dist;
+    double fy = magnitude * dy / dist;
+
+    // update velocities according to normal force
+    this->m_vx += fx / this->m_mass;
+    this->m_vy += fy / this->m_mass;
+    that->m_vx -= fx / that->m_mass;
+    that->m_vy -= fy / that->m_mass;
+
+    // update collision counts
+    this->m_count++;
+    that->m_count++;
 }
